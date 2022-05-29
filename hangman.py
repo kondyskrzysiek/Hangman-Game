@@ -1,5 +1,5 @@
 import os
-
+import random
 
 text_hangman = """
     _    _              _   _    _____   __  __              _   _ 
@@ -18,9 +18,12 @@ def clear_console():
 
 
 class Game:
-    def __init__(self, word, category):
-        self.first_draw = True
+    def __init__(self, word, mode, category=''):
         self.word = word.upper()
+        self.file = open('slowa.txt', 'r', encoding='utf-8')
+        self.dictionary = [i for i in self.file.read().split('\n') if len(i) == len(self.word)]
+        self.file.close()
+        self.first_draw = True
         self.category_word = category
         self.all_letters_in_game = set()
         self.drawings_hangman = [
@@ -161,12 +164,26 @@ _________
                 if len(self.letters) == len(set([i for i in self.word])):
                     print('YOU WIN\n')
                     break
+            if mode == '3':
+                self.letter = self.computer_choice_letter()
+            else:
+                self.letter = self.inpt_letter()
 
-            self.letter = self.inpt_letter()
             if self.letter == self.word:
                 print('YOU WIN\n')
                 break
             self.check = self.check_word()
+
+    def computer_choice_letter(self):
+        dict_letter = {}
+        for w in self.dictionary:
+            for i in w:
+                dict_letter[i] = dict_letter.get(i,0) + 1
+        print(dict_letter)
+        print(max(dict_letter.values()))
+        print(max(dict_letter,key=dict_letter.get))
+
+        # return letter
 
     def inpt_letter(self):
         letter = input('Enter the letter >> ').upper()
@@ -198,10 +215,24 @@ if __name__ == '__main__':
 
     print(text_hangman)
 
-    start_end = input('START/END\n>> ')
+    mode = input(
+        'mode\n-multiplayer[1]\n-computer choose word[2]\n-computer solve[3]\n>> ')
 
-    if start_end.lower() == 'start':
+    if mode == '1':
         word = input('Enter the word\n>>')
         category = input('Enter the category\n>>')
         clear_console()
-        Game(word, category)
+        Game(word, mode, category)
+    elif mode == '2':
+        dictionary = open('slowa.txt', 'r', encoding='utf-8')
+        word = random.choice(dictionary.read().split('\n'))
+        dictionary.close()
+        clear_console()
+        Game(word, mode)
+    elif mode == '3':
+        dictionary = open('slowa.txt', 'r', encoding='utf-8')
+        word = random.choice(dictionary.read().split('\n'))
+        dictionary.close()
+        clear_console()
+        print(word)
+        Game(word, mode)
