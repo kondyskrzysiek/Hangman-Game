@@ -1,7 +1,5 @@
-import enum
 import os
 import random
-import datetime
 
 text_hangman = """
     _    _              _   _    _____   __  __              _   _ 
@@ -59,7 +57,29 @@ _________
     |         
     |
     |
-_________
+____|____
+""",
+
+            """
+     
+    |          
+    |          
+    |          
+    |         
+    |
+   /|
+__/_|____
+""",
+
+            """
+     
+    |          
+    |          
+    |          
+    |         
+    |
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -68,8 +88,8 @@ _________
     |          
     |         
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -78,8 +98,8 @@ _________
     |          
     |         
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -88,8 +108,8 @@ _________
     |          
     |         
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -98,8 +118,8 @@ _________
     |          |
     |         
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -108,8 +128,8 @@ _________
     |         /|
     |         
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -118,8 +138,8 @@ _________
     |         /|\\
     |         
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
@@ -128,18 +148,29 @@ _________
     |         /|\\
     |         / 
     |
+   /|\\
+__/_|_\\__
+""",
+
+            """
+     __________
+    | /        | 
+    |/         O
+    |         /|\\
+    |         / 
     |
-_________
+   /|\\
+__/_|_\\__
 """,
             """
      __________
-    |          | 
-    |          O
+    | /        | 
+    |/         O
     |         /|\\
     |         / \\
     |
-    |
-_________
+   /|\\
+__/_|_\\__
 """
         ]
         self.mistake = 0
@@ -151,15 +182,6 @@ _________
             self.letters[' '] = 1
         if '-' in self.word:
             self.letters['-'] = 1
-
-        self.dict_letter = {}
-
-        for w in self.dictionary:
-            for i in w:
-                self.dict_letter[i] = self.dict_letter.get(i, 0) + 1
-
-
-
 
         while True:
             if self.first_draw:
@@ -186,32 +208,32 @@ _________
                 break
             self.check = self.check_word()
 
-    def check_letter_and_index(self,w):
+    def check_letter_and_index(self, w):
         for key in self.letters.keys():
             for i in self.letters[key]:
                 if w[i] != key.lower():
-                  return False
+                    return False
         return True
 
-    # all(all(w[i] == key.lower() for i in self.letters[key]) for key in self.letters.keys())
-
     def computer_choice_letter(self):
-        
+        dict_letter = {}
         list_remove = []
         index = 0
         letter = ''
         for w in self.dictionary:
             if any(i.lower() in w for i in self.all_letters_in_game) or not self.check_letter_and_index(w):
                 list_remove.append(w)
+            else:
                 for i in w:
-                    self.dict_letter[i] -= 1
+                    dict_letter[i] = dict_letter.get(i, 0) + 1
 
         for i in list_remove:
             self.dictionary.remove(i)
 
         while True:
 
-            letter = sorted(self.dict_letter, key=self.dict_letter.get,reverse=True)[index].upper()
+            letter = sorted(dict_letter, key=dict_letter.get,
+                            reverse=True)[index].upper()
             if not letter in self.letters.keys() and not letter in self.all_letters_in_game:
                 break
             index += 1
@@ -268,13 +290,7 @@ if __name__ == '__main__':
         clear_console()
         Game(word, mode)
     elif mode == '3':
-        # dictionary = open('slowa.txt', 'r', encoding='utf-8')
-        # word = random.choice(dictionary.read().split('\n'))
-        word = 'niekonopnickich'
-        # dictionary.close()
+        word = input('Enter the word\n>>')
         clear_console()
         print(word)
-        t1 = datetime.datetime.now()
         Game(word, mode)
-        t2 = datetime.datetime.now()
-        print(t2-t1)
