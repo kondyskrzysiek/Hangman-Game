@@ -1,5 +1,7 @@
+import enum
 import os
 import random
+import datetime
 
 text_hangman = """
     _    _              _   _    _____   __  __              _   _ 
@@ -21,7 +23,8 @@ class Game:
     def __init__(self, word, mode, category=''):
         self.word = word.upper()
         self.file = open('slowa.txt', 'r', encoding='utf-8')
-        self.dictionary = [i for i in self.file.read().split('\n') if len(i) == len(self.word)]
+        self.dictionary = [i for i in self.file.read().split(
+            '\n') if len(i) == len(self.word)]
         self.file.close()
         self.first_draw = True
         self.category_word = category
@@ -142,12 +145,21 @@ _________
         self.mistake = 0
         self.text_draw = ' '.join(
             [i if (i == ' ') or (i == '-') else '_' for i in self.word])
-        self.letters = set()
+        self.letters = {}
 
         if ' ' in self.word:
-            self.letters.add(' ')
+            self.letters[' '] = 1
         if '-' in self.word:
-            self.letters.add(' ')
+            self.letters['-'] = 1
+
+        self.dict_letter = {}
+
+        for w in self.dictionary:
+            for i in w:
+                self.dict_letter[i] = self.dict_letter.get(i, 0) + 1
+
+
+
 
         while True:
             if self.first_draw:
@@ -174,28 +186,54 @@ _________
                 break
             self.check = self.check_word()
 
-    def computer_choice_letter(self):
-        dict_letter = {}
-        for w in self.dictionary:
-            for i in w:
-                dict_letter[i] = dict_letter.get(i,0) + 1
-        print(dict_letter)
-        print(max(dict_letter.values()))
-        print(max(dict_letter,key=dict_letter.get))
+    def check_letter_and_index(self,w):
+        for key in self.letters.keys():
+            for i in self.letters[key]:
+                if w[i] != key.lower():
+                  return False
+        return True
 
-        # return letter
+    # all(all(w[i] == key.lower() for i in self.letters[key]) for key in self.letters.keys())
+
+    def computer_choice_letter(self):
+        
+        list_remove = []
+        index = 0
+        letter = ''
+        for w in self.dictionary:
+            if any(i.lower() in w for i in self.all_letters_in_game) or not self.check_letter_and_index(w):
+                list_remove.append(w)
+                for i in w:
+                    self.dict_letter[i] -= 1
+
+        for i in list_remove:
+            self.dictionary.remove(i)
+
+        while True:
+
+            letter = sorted(self.dict_letter, key=self.dict_letter.get,reverse=True)[index].upper()
+            if not letter in self.letters.keys() and not letter in self.all_letters_in_game:
+                break
+            index += 1
+
+        return letter
 
     def inpt_letter(self):
         letter = input('Enter the letter >> ').upper()
         letter = letter.strip()
-        self.all_letters_in_game.add(letter)
         return letter
 
     def check_word(self):
         if self.letter in self.word:
-            self.letters.add(self.letter)
+            if not self.letter in self.letters:
+                self.letters[self.letter] = []
+            for i, v in enumerate(self.word):
+                if v == self.letter:
+                    self.letters[self.letter].append(i)
             return True
         self.mistake += 1
+        self.all_letters_in_game.add(self.letter)
+
         return False
 
     def cout(self):
@@ -203,7 +241,7 @@ _________
 
         print(self.drawings_hangman[self.mistake])
         if self.check:
-            self.text_draw = ' '.join([i if any(i == l for l in self.letters) or (
+            self.text_draw = ' '.join([i if any(i == l for l in self.letters.keys()) or (
                 i == ' ') or (i == '-') else '_' for i in self.word])
 
         print(
@@ -230,9 +268,13 @@ if __name__ == '__main__':
         clear_console()
         Game(word, mode)
     elif mode == '3':
-        dictionary = open('slowa.txt', 'r', encoding='utf-8')
-        word = random.choice(dictionary.read().split('\n'))
-        dictionary.close()
+        # dictionary = open('slowa.txt', 'r', encoding='utf-8')
+        # word = random.choice(dictionary.read().split('\n'))
+        word = 'niekonopnickich'
+        # dictionary.close()
         clear_console()
         print(word)
+        t1 = datetime.datetime.now()
         Game(word, mode)
+        t2 = datetime.datetime.now()
+        print(t2-t1)
