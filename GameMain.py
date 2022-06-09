@@ -41,7 +41,7 @@ class Mode3:
 
             if self.mistake == len(self.picture_hangman)-1:
                 print('USER WIN : ', self.word)
-                
+
                 break
             elif not '_' in self.tab_word:
                 print('COMPUTER WIN : ')
@@ -75,15 +75,52 @@ class Mode3:
         print('\n   ', ' '.join(list(map(lambda x: x.upper(), self.tab_word))))
         print('\n')
 
+
 class Mode4:
-    def __init__(self,len_word,dictionary):
+    def __init__(self, len_word, dictionary):
         self.len_word = len_word
         file = open(dictionary, 'r', encoding='utf8')
         self.words = [i.strip() for i in file.readlines()
-                           if len(i.strip()) == len_word]
+                      if len(i.strip()) == len_word]
         file.close()
+        self.letter_mistake = []
+        computer = ComputerMode.ComputerSolve(self.words)
+        self.tab_word = ['_' for _ in range(len_word)]
+        self.letter = ''
+        self.check = False
 
-        
+        while True:
+            self.letter = computer.return_letter(self.check_letter(),show_words=True)
+            # clear_console()
+            self.show()
+            if self.check:
+                break
+
+    def check_letter(self):
+        tab = []
+        print(f'liter : {self.letter}')
+        check = input('Czy litera jest w słowie? : y/n/ : ')
+
+        if check.lower() == 'y':
+            wart_ile = int(input('ile jest liter w słowie : '))
+            for _ in range(wart_ile):
+                index = int(input('>> '))
+                tab.append(index-1)
+                self.tab_word[index-1] = self.letter
+            return tab
+
+        self.letter_mistake.append(self.letter)
+        return tab
+
+    def show(self):
+        if not '_' in self.tab_word:
+            self.check = True
+        print('\n')
+        print('Letter mistake : ', ', '.join(
+            list(map(lambda x: x.upper(), self.letter_mistake))))
+        print('\n   ', ' '.join(list(map(lambda x: x.upper(), self.tab_word))))
+        print('\n')
+
 
 if __name__ == '__main__':
     dictionary = 'slowa.txt'
@@ -262,4 +299,4 @@ __/_|_\\__
     elif mode == '4':
         len_word = int(input('lenght word : '))
         clear_console()
-        Mode4(len_word,dictionary)
+        Mode4(len_word, dictionary)

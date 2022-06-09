@@ -22,7 +22,7 @@ class ComputerSolve:
                 return False
         return True
 
-    def return_letter(self, tab_true_letter):
+    def return_letter(self, tab_true_letter,show_words=False):
         if self.letter and tab_true_letter:
             tab = []
             for i in self.words:
@@ -38,6 +38,8 @@ class ComputerSolve:
 
         self.letter = self.letter_popular()
         self.letter_which_be.append(self.letter)
+        if show_words and len(self.words) <= 20:
+            print('\n\n',self.words)
         return self.letter
 
     def letter_popular(self):
