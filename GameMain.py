@@ -88,28 +88,33 @@ class Mode4:
         self.tab_word = ['_' for _ in range(len_word)]
         self.letter = ''
         self.check = False
+        tab_check_letter = self.check_letter()
 
         while True:
-            self.letter = computer.return_letter(self.check_letter(),show_words=True)
-            # clear_console()
+            clear_console()
             self.show()
+            self.letter = computer.return_letter(tab_check_letter, show_words=True)
+            tab_check_letter = self.check_letter()
+
             if self.check:
                 break
 
     def check_letter(self):
         tab = []
+
         print(f'liter : {self.letter}')
-        check = input('Czy litera jest w słowie? : y/n/ : ')
+        if self.letter != '':
+            check = input('Czy litera jest w słowie? : y/n/ : ')
 
-        if check.lower() == 'y':
-            wart_ile = int(input('ile jest liter w słowie : '))
-            for _ in range(wart_ile):
-                index = int(input('>> '))
-                tab.append(index-1)
-                self.tab_word[index-1] = self.letter
-            return tab
+            if check.lower() == 'y':
+                wart_ile = int(input('ile jest liter w słowie : '))
+                for _ in range(wart_ile):
+                    index = int(input('>> '))
+                    tab.append(index-1)
+                    self.tab_word[index-1] = self.letter
+                return tab
 
-        self.letter_mistake.append(self.letter)
+            self.letter_mistake.append(self.letter)
         return tab
 
     def show(self):
@@ -276,9 +281,8 @@ __/_|_\\__
 
     print(text_hangman)
 
-    # mode = input(
-    #     'mode\n-multiplayer[1]\n-computer choose word[2]\n-computer solve[3]\n>> ')
-    mode = '4'
+    mode = input(
+        'mode\n-multiplayer[1]\n-computer choose word[2]\n-computer solve[3]\n-computer help you real game[4]\n>> ')
 
     if mode == '1':
         word = input('Enter the word\n>>')
@@ -293,7 +297,6 @@ __/_|_\\__
         # TODO : mode gra komputer losuje slowo ty zgadujesz
     elif mode == '3':
         word = input('Enter the word\n>>')
-        # word = 'kot'
         clear_console()
         Mode3(word, dictionary, picture_hangman)
     elif mode == '4':
