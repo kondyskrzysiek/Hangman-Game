@@ -177,7 +177,6 @@ __/_|_\\__
         self.text_draw = ' '.join(
             [i if (i == ' ') or (i == '-') else '_' for i in self.word])
         self.letters = {}
-        self.stan = 0
 
         if ' ' in self.word:
             self.letters[' '] = 1
@@ -195,11 +194,10 @@ __/_|_\\__
                 if self.mistake == len(self.drawings_hangman)-1:
                     print('YOU LOST : ', self.word)
 
-                    break
+                    return 0
                 if len(self.letters) == len(set([i for i in self.word])):
                     print('YOU WIN\n')
-                    self.stan = 1
-                    break
+                    return 1
             if mode == '3':
                 self.letter = self.computer_choice_letter()
             else:
@@ -209,15 +207,12 @@ __/_|_\\__
                 print('YOU WIN\n')
                 break
             self.check = self.check_word()
-
-    def stan_gry(self):
-        return self.stan
+        
 
     def check_letter_and_index(self, w):
-        for key in self.letters.keys():
-            for i in self.letters[key]:
-                if w[i] != key.lower():
-                    return False
+        for i in self.letters[self.letter]:
+            if w[i] != self.letter:
+                return False
         return True
 
     def computer_choice_letter(self):
@@ -226,7 +221,7 @@ __/_|_\\__
         index = 0
         letter = ''
         for w in self.dictionary:
-            if any(i.lower() in w for i in self.all_letters_in_game) or not self.check_letter_and_index(w):
+            if (len(self.letters) or len(self.all_letters_in_game)) and ((not self.check and self.letter.lower() in w) or (self.check and not self.check_letter_and_index(w.upper()))):
                 list_remove.append(w)
             else:
                 for i in w:
@@ -235,10 +230,11 @@ __/_|_\\__
         for i in list_remove:
             self.dictionary.remove(i)
 
-        while True:
+        array_sorted = sorted(dict_letter, key=dict_letter.get,
+                            reverse=True)
 
-            letter = sorted(dict_letter, key=dict_letter.get,
-                            reverse=True)[index].upper()
+        while True:
+            letter = array_sorted[index].upper()
             if not letter in self.letters.keys() and not letter in self.all_letters_in_game:
                 break
             index += 1

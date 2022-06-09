@@ -177,12 +177,16 @@ __/_|_\\__
         self.text_draw = ' '.join(
             [i if (i == ' ') or (i == '-') else '_' for i in self.word])
         self.letters = {}
-        self.stan = 0
 
         if ' ' in self.word:
             self.letters[' '] = 1
         if '-' in self.word:
             self.letters['-'] = 1
+
+        self.letter = ''
+        self.stan = 0
+
+    
 
         while True:
             if self.first_draw:
@@ -194,7 +198,6 @@ __/_|_\\__
                 self.cout()
                 if self.mistake == len(self.drawings_hangman)-1:
                     print('YOU LOST : ', self.word)
-
                     break
                 if len(self.letters) == len(set([i for i in self.word])):
                     print('YOU WIN\n')
@@ -208,55 +211,77 @@ __/_|_\\__
             if self.letter == self.word:
                 print('YOU WIN\n')
                 break
-            self.check = self.check_word()
+            self.check = self.check_letter()
 
     def stan_gry(self):
         return self.stan
 
     def check_letter_and_index(self, w):
-        for key in self.letters.keys():
-            for i in self.letters[key]:
-                if w[i] != key.lower():
+        if w.count(self.letter) == len(self.letters[self.letter]):
+            for i in self.letters[self.letter]:
+                if w[i] != self.letter:
                     return False
-        return True
+            return True
+        return False
 
     def computer_choice_letter(self):
+        list_help = []
         dict_letter = {}
-        list_remove = []
-        index = 0
         letter = ''
-        for w in self.dictionary:
-            if any(i.lower() in w for i in self.all_letters_in_game) or not self.check_letter_and_index(w):
-                list_remove.append(w)
+        # if len(self.dictionary) == 1:
+        #     return self.dictionary[0]
+
+
+        if len(self.letters) or len(self.all_letters_in_game):
+            
+            if self.check:
+                # self.dictionary = list(set(self.dictionary) & (set(self.dictionary_letter_word[self.letter])))
+
+                for w in self.dictionary:
+                    if self.check_letter_and_index(w.upper()):
+                        list_help.append(w)
+                self.dictionary = list_help
+
             else:
-                for i in w:
-                    dict_letter[i] = dict_letter.get(i, 0) + 1
+                # for i in self.dictionary_letter_word[self.letter]:
+                #     if i in self.dictionary:
+                #         self.dictionary.remove(i)
 
-        for i in list_remove:
-            self.dictionary.remove(i)
+                for i in self.dictionary:
+                    if not self.letter.lower() in i:
+                        list_help.append(i)
 
-        while True:
+                self.dictionary = list_help
 
-            letter = sorted(dict_letter, key=dict_letter.get,
-                            reverse=True)[index].upper()
-            if not letter in self.letters.keys() and not letter in self.all_letters_in_game:
-                break
-            index += 1
+        
+        
 
-        return letter
+        for w in self.dictionary:
+            for i in w:
+                dict_letter[i] = dict_letter.get(i, 0) + 1
+
+        for i in self.letters:
+            dict_letter[i.lower()] = 0
+
+        letter = max(dict_letter, key=dict_letter.get)
+
+
+
+        return letter.upper()
 
     def inpt_letter(self):
         letter = input('Enter the letter >> ').upper()
         letter = letter.strip()
         return letter
 
-    def check_word(self):
+    def check_letter(self):
         if self.letter in self.word:
             if not self.letter in self.letters:
                 self.letters[self.letter] = []
             for i, v in enumerate(self.word):
                 if v == self.letter:
                     self.letters[self.letter].append(i)
+
             return True
         self.mistake += 1
         self.all_letters_in_game.add(self.letter)
