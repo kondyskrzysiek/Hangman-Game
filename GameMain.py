@@ -1,6 +1,11 @@
 import os
 import random
 import ComputerMode
+from Mode3 import  computer_solve
+
+
+def clear_console():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 text_hangman = """
     _    _              _   _    _____   __  __              _   _ 
@@ -14,66 +19,6 @@ text_hangman = """
 """
 
 
-def clear_console():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
-class Mode3:
-    def __init__(self, word, dictionary, picture_hangman):
-        self.word = word
-
-        file = open(dictionary, 'r', encoding='utf8')
-        self.dictionary = [i.strip() for i in file.readlines()
-                           if len(i.strip()) == len(word)]
-        file.close()
-
-        self.picture_hangman = picture_hangman
-        self.tab_word = ['_' for _ in word]
-        self.mistake = 0
-        self.letter_mistake = []
-        computer = ComputerMode.ComputerSolve(self.dictionary)
-        # ComputerMode.ComputerSolve(len())
-        self.letter = ''
-        self.stan = 0
-        while True:
-            self.letter = computer.return_letter(self.check_letter())
-            self.show()
-
-            if self.mistake == len(self.picture_hangman)-1:
-                print('USER WIN : ', self.word)
-
-                break
-            elif not '_' in self.tab_word:
-                print('COMPUTER WIN : ')
-                self.stan = 1
-                break
-
-            # break
-
-    def check_letter(self):
-        tab = []
-        if self.letter in self.word:
-            for i, v in enumerate(self.word):
-                if v == self.letter:
-                    tab.append(i)
-                    self.tab_word[i] = v
-            return tab
-
-        self.mistake += 1
-        self.letter_mistake.append(self.letter)
-        return tab
-
-    def stan_gry(self):
-        return self.stan
-
-    def show(self):
-        clear_console()
-        print(self.picture_hangman[self.mistake])
-        print('\n')
-        print('Letter mistake : ', ', '.join(
-            list(map(lambda x: x.upper(), self.letter_mistake))))
-        print('\n   ', ' '.join(list(map(lambda x: x.upper(), self.tab_word))))
-        print('\n')
 
 
 class Mode4:
@@ -298,7 +243,7 @@ __/_|_\\__
     elif mode == '3':
         word = input('Enter the word\n>>')
         clear_console()
-        Mode3(word, dictionary, picture_hangman)
+        computer_solve(word, dictionary, picture_hangman)
     elif mode == '4':
         len_word = int(input('lenght word : '))
         clear_console()
