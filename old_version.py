@@ -324,3 +324,4 @@ if __name__ == '__main__':
         clear_console()
         print(word)
         Game(word, mode)
+1

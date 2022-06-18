@@ -1,7 +1,7 @@
 import os
 import random
 import ComputerMode
-from Mode3 import  computer_solve
+import Mode3
 
 
 def clear_console():
@@ -243,7 +243,8 @@ __/_|_\\__
     elif mode == '3':
         word = input('Enter the word\n>>')
         clear_console()
-        computer_solve(word, dictionary, picture_hangman)
+        Mode3.computer_solve(word, dictionary, picture_hangman)
+        # Mode3.computer_solve()
     elif mode == '4':
         len_word = int(input('lenght word : '))
         clear_console()

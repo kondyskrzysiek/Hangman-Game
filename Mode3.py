@@ -1,4 +1,5 @@
 import os
+from re import I
 import ComputerMode
 
 
@@ -8,53 +9,66 @@ def clear_console():
 
 def computer_solve(word, dictionary, picture_hangman):
 
-    file = open(dictionary, 'r', encoding='utf8')
-    dictionary = [i.strip() for i in file.readlines()
-                  if len(i.strip()) == len(word)]
-    file.close()
-
-    tab_word = ['_' for _ in word]
+    tab_words = [['_' for _ in w]for w in word.split(' ')]
+    letters = []
     mistake = 0
-    letter_mistake = []
-    computer = ComputerMode.ComputerSolve(dictionary)
-    letter = ''
-
-    while True:
-        tab, letter_mistake, tab_word, mistake = check_letter(letter, word, tab_word, letter_mistake)
-        letter = computer.return_letter(tab)
-        show(picture_hangman, mistake, letter_mistake, tab_word)
-
-        if mistake == len(picture_hangman)-1:
-            print('USER WIN : ', word)
-            break
-
-        elif not '_' in tab_word:
-            print('COMPUTER WIN : ')
-            break
-
-        # break
-
-
-def check_letter(letter, word, tab_word, letter_mistake,mistake):
-    tab = []
+    index_kolejki = [[i, v] for i, v in enumerate(word.split(' '))]
+    index_kolejki = sorted(index_kolejki, key=lambda x: len(x[1]), reverse=True)
     
-    if letter != '' and letter in word:
+    
+    for index, value in index_kolejki:
+        if mistake == len(picture_hangman) -1:
+            break
+
+        obj = ComputerMode.ComputerSolve(tab_words[index], dictionary)
+        check_l = False
+
+        if letters:
+            for i in letters:
+                tab_words = check_letter(index,i,value,tab_words)[1]
+
+
+            if letters[len(letters) - 1] in tab_words[index]:
+                check_l = True
+            obj.next_word(tab_words[index],letters,check_l)
+            
+
+        while True:
+            show(tab_words, letters, picture_hangman[mistake])
+            # TODO: return letter
+            letter = obj.return_letter(check_l, tab_words[index])
+            letters.append(letter)
+            check_l, tab_words = check_letter(index, letter, value, tab_words)
+            if not check_l:
+                mistake += 1
+            if mistake == len(picture_hangman):
+                print('Computer LOSS')
+                exit()
+            if not '_' in tab_words[index]:
+                break
+        show(tab_words, letters, picture_hangman[mistake])
+    print('Computer WIN')
+        
+
+
+def check_letter(index, letter, word, tab_words):
+    if letter in word:
         for i, v in enumerate(word):
             if v == letter:
-                tab.append(i)
-                tab_word[i] = v
-        return tab
-
-    mistake += 1
-    letter_mistake.append(letter)
-    return tab, letter_mistake, tab_word, mistake
+                tab_words[index][i] = v
+        return True, tab_words
+    return False, tab_words
 
 
-def show(picture_hangman, mistake, letter_mistake, tab_word):
+def show(tab_words, letters, picture_hangman):
     clear_console()
-    print(picture_hangman[mistake])
+    print(picture_hangman)
     print('\n')
     print('Letter mistake : ', ', '.join(
-        list(map(lambda x: x.upper(), letter_mistake))))
-    print('\n   ', ' '.join(list(map(lambda x: x.upper(), tab_word))))
+        list(map(lambda x: x.upper(), letters))))
+    print('\n    ', end='')
+    for l in tab_words:
+        line = ' '.join(map(lambda x: x.upper(), l))
+        print(line, end='   ')
+
     print('\n')
