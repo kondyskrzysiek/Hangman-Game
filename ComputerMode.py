@@ -65,7 +65,7 @@ class ComputerSolve:
 
         # file.close()
 
-        self.letter_which_be = letters
+        self.letter_which_be = letters.copy()
         if not check:
             tab = []
 

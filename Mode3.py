@@ -1,20 +1,167 @@
 import os
-from re import I
 import ComputerMode
+import GUI
 
 
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def computer_solve(word, dictionary, picture_hangman):
+def computer_solve(word):
+    dictionary = 'slowa.txt'
+    picture_hangman = [
+
+        """
+     
+              
+              
+              
+             
+    
+    
+
+""",
+        """
+     
+              
+              
+              
+             
+    
+    
+_________
+""",
+        """
+     
+    |          
+    |          
+    |          
+    |         
+    |
+    |
+____|____
+""",
+
+        """
+     
+    |          
+    |          
+    |          
+    |         
+    |
+   /|
+__/_|____
+""",
+
+        """
+     
+    |          
+    |          
+    |          
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          
+    |          
+    |          
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          | 
+    |          
+    |          
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          | 
+    |          O
+    |          
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          | 
+    |          O
+    |          |
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          | 
+    |          O
+    |         /|
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          | 
+    |          O
+    |         /|\\
+    |         
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    |          | 
+    |          O
+    |         /|\\
+    |         / 
+    |
+   /|\\
+__/_|_\\__
+""",
+
+        """
+     __________
+    | /        | 
+    |/         O
+    |         /|\\
+    |         / 
+    |
+   /|\\
+__/_|_\\__
+""",
+        """
+     __________
+    | /        | 
+    |/         O
+    |         /|\\
+    |         / \\
+    |
+   /|\\
+__/_|_\\__
+"""
+    ]
 
     tab_words = [['_' for _ in w]for w in word.split(' ')]
     letters = []
     mistake = 0
     index_kolejki = [[i, v] for i, v in enumerate(word.split(' '))]
     index_kolejki = sorted(index_kolejki, key=lambda x: len(x[1]), reverse=True)
-    
+    l = True
     
     for index, value in index_kolejki:
         if mistake == len(picture_hangman) -1:
@@ -23,7 +170,8 @@ def computer_solve(word, dictionary, picture_hangman):
         obj = ComputerMode.ComputerSolve(tab_words[index], dictionary)
         check_l = False
 
-        if letters:
+        if letters and l:
+            l = False
             for i in letters:
                 tab_words = check_letter(index,i,value,tab_words)[1]
 
@@ -34,7 +182,7 @@ def computer_solve(word, dictionary, picture_hangman):
             
 
         while True:
-            show(tab_words, letters, picture_hangman[mistake])
+            show(tab_words, letters,picture_hangman[mistake])
             # TODO: return letter
             letter = obj.return_letter(check_l, tab_words[index])
             letters.append(letter)
@@ -46,7 +194,7 @@ def computer_solve(word, dictionary, picture_hangman):
                 exit()
             if not '_' in tab_words[index]:
                 break
-        show(tab_words, letters, picture_hangman[mistake])
+        show(tab_words, letters,picture_hangman[mistake])
     print('Computer WIN')
         
 
@@ -60,7 +208,9 @@ def check_letter(index, letter, word, tab_words):
     return False, tab_words
 
 
-def show(tab_words, letters, picture_hangman):
+def show(tab_words, letters,picture_hangman):
+    
+    # GUI.MainWindow.update_screen(tab_words,letters)
     clear_console()
     print(picture_hangman)
     print('\n')
@@ -72,3 +222,5 @@ def show(tab_words, letters, picture_hangman):
         print(line, end='   ')
 
     print('\n')
+
+computer_solve('osoba osy')
