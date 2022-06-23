@@ -22,7 +22,7 @@ class Ui_MainWindow(object):
                                  "border-radius : 15px;\n"
                                  "}\n"
                                  "\n"
-                                 "#lineEdit, #lineEdit_2, #lineEdit_3{\n"
+                                 "#lineEdit, #lineEdit_2{\n"
                                  "border: 5px solid #D9D9D9;\n"
                                  "border-radius:15px\n"
                                  "}")
@@ -152,31 +152,7 @@ class Ui_MainWindow(object):
         self.lineEdit_2.setObjectName("lineEdit_2")
         self.horizontalLayout_4.addWidget(self.lineEdit_2)
         self.verticalLayout_8.addWidget(self.widget_7, 0, QtCore.Qt.AlignTop)
-        # self.widget_3 = QtWidgets.QWidget(self.widget_6)
-        # self.widget_3.setMaximumSize(QtCore.QSize(16777215, 70))
-        # self.widget_3.setObjectName("widget_3")
-        # self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.widget_3)
-        # self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
-        # self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        # self.label_7 = QtWidgets.QLabel(self.widget_3)
-        # self.label_7.setMaximumSize(QtCore.QSize(16777215, 60))
-        font = QtGui.QFont()
-        font.setPointSize(15)
-        font.setBold(True)
-        font.setWeight(75)
-        # self.label_7.setFont(font)
-        # self.label_7.setObjectName("label_7")
-        # self.horizontalLayout_5.addWidget(self.label_7)
-        # self.lineEdit_3 = QtWidgets.QLineEdit(self.widget_3)
-        # self.lineEdit_3.setMaximumSize(QtCore.QSize(100, 16777215))
-        # font = QtGui.QFont()
-        # font.setPointSize(15)
-        # self.lineEdit_3.setFont(font)
-        # self.lineEdit_3.setObjectName("lineEdit_3")
-        # self.horizontalLayout_5.addWidget(
-        #     self.lineEdit_3, 0, QtCore.Qt.AlignHCenter)
-        # self.verticalLayout_8.addWidget(
-        #     self.widget_3, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        
         self.verticalLayout_5.addWidget(self.widget_6, 0, QtCore.Qt.AlignTop)
         self.widget_4 = QtWidgets.QWidget(self.page_4)
         self.widget_4.setObjectName("widget_4")
@@ -313,7 +289,6 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "PASSWORD : "))
         self.button_entry.setText(_translate("MainWindow", "Entry"))
         self.label_6.setText(_translate("MainWindow", "How many words : "))
-        # self.label_7.setText(_translate("MainWindow", "Letter in word : "))
         self.button_next_word.setText(_translate("MainWindow", "next word"))
         self.button_len_password.setText(_translate("MainWindow", "finish"))
         self.label_3.setText(_translate("MainWindow", "LETTERS :"))

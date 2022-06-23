@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QTextEdit, QLabel, QWidget, QHBoxLayout, QLineEdit
 from test_python import Ui_MainWindow
 import sys
 import ComputerMode
@@ -10,13 +10,17 @@ class MainWindow:
         self.main_win = QMainWindow()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self.main_win)
-
         self.ui.stackedWidget.setCurrentWidget(self.ui.menu_page)
+
+        self.create_tab_edit_text_len_word = False
+
         self.thread = {}
         self.ui.button_computer.clicked.connect(self.open_page2)
         self.ui.button_entry.clicked.connect(self.open_page3)
         self.ui.button_hack.clicked.connect(self.open_page4)
         self.ui.button_next_word.clicked.connect(self.create_lineEdit)
+        self.ui.button_len_password.clicked.connect(self.open_page5)
+        self.ui.button_next_letter.clicked.connect(self.game)
 
     def show(self):
         self.main_win.show()
@@ -57,13 +61,91 @@ class MainWindow:
         self.thread[1].signal_label.connect(self.lb)
         self.thread[1].signal_label_4.connect(self.lb4)
         self.thread[1].signal_picture.connect(self.draw_picture)
-        # self.pushButton.setEnabled(False)
 
     def open_page4(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.page_4)
 
+    def open_page5(self):
+        if self.create_tab_edit_text_len_word:
+            self.ui.stackedWidget.setCurrentWidget(self.ui.page_5)
+            self.tab_words = []
+            for index in range(len(self.edit_text_len_word)):
+                self.tab_words.append(
+                    ['_' for _ in range(int(self.edit_text_len_word[index].text()))])
+
+            self.tab = []
+            font = QtGui.QFont()
+            font.setPointSize(20)
+            font.setBold(True)
+            font.setWeight(75)
+            index = 0
+            for line in self.tab_words:
+                for value in line:
+                    edit_text = QTextEdit(self.ui.widget_5)
+                    edit_text.setMaximumSize(QtCore.QSize(50, 50))
+                    edit_text.setFont(font)
+                    edit_text.setStyleSheet('border: 0px solid')
+                    self.tab.append(edit_text)
+                    self.ui.horizontalLayout_7.addWidget(
+                        self.tab[index], 0, QtCore.Qt.AlignLeft)
+                    self.tab[index].setText(value)
+                    index += 1
+
+                label = QLabel(self.ui.widget_5)
+                label.setMaximumSize(QtCore.QSize(50, 50))
+                label.setMinimumSize(QtCore.QSize(50, 50))
+                label.setText('')
+                self.tab.append(label)
+                self.ui.horizontalLayout_7.addWidget(self.tab[index])
+                index += 1
+
+            self.kolejka = [[i, v] for i, v in enumerate(self.word.split(' '))]
+            self.dictionary = 'slowa.txt'
+
+            self.kolejka = sorted(
+                self.kolejka key=lambda x: len(x[1]), reverse=True)
+            self.index_kolejki = 0
+            self.obj = ComputerMode.ComputerSolve(
+                self.tab_words[self.kolejka[self.index_kolejki]], self.dictionary)
+            self.letters = []
+
     def create_lineEdit(self):
-        pass
+        self.create_tab_edit_text_len_word = True
+        self.edit_text_len_word = []
+
+        for i in range(int(self.ui.lineEdit_2.text())):
+            widget = QWidget(self.ui.widget_6)
+            widget.setMaximumSize(QtCore.QSize(16777215, 70))
+
+            horizontalLayout = QHBoxLayout(widget)
+            horizontalLayout.setContentsMargins(0, 0, 0, 0)
+
+            label = QLabel(widget)
+            label.setMaximumSize(QtCore.QSize(16777215, 60))
+            font = QtGui.QFont()
+            font.setPointSize(15)
+            font.setBold(True)
+            font.setWeight(75)
+            label.setFont(font)
+            horizontalLayout.addWidget(label)
+            label_text = str(i+1) + ' len word'
+            label.setText(label_text)
+
+            textEdit = QLineEdit(widget)
+            textEdit.setMaximumSize(QtCore.QSize(60, 16777215))
+            font = QtGui.QFont()
+            font.setPointSize(20)
+            font.setBold(True)
+            textEdit.setFont(font)
+            textEdit.setStyleSheet('border: 2px solid #D9D9D9;'
+                                   'border-radius: 15px;')
+
+            # textEdit.
+            horizontalLayout.addWidget(
+                textEdit, 0, QtCore.Qt.AlignHCenter)
+            self.ui.verticalLayout_8.addWidget(
+                widget, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+            self.edit_text_len_word.append(textEdit)
 
     def lb(self, tab_words):
         index = 0
@@ -81,6 +163,29 @@ class MainWindow:
 
     def draw_picture(self, picture):
         self.ui.label.setText(picture)
+
+    def game(self):
+        if all(i != '_' for i in self.tab_words[self.kolejka[self.index_kolejki]]):
+            self.index_kolejki += 1
+            self.obj = ComputerMode.ComputerSolve(
+                self.tab_words[self.kolejka[self.index_kolejki]], self.dictionary)
+            for i in self.letters:
+                self.tab_words = self.check_letter(self.kolejka[self.index_kolejki], i, value, tab_words)[1]
+
+                if self.letters[len(self.letters) - 1] in self.tab_words[self.kolejka[self.index_kolejki]]:
+                    check_l = True
+                self.obj.next_word(
+                    self.tab_words[self.kolejka[self.index_kolejki]], self.letters, check_l)
+
+        pass
+
+    def check_letter(self, index, letter, word, tab_words):
+        if letter in word:
+            for i, v in enumerate(word):
+                if v == letter:
+                    tab_words[index][i] = v
+            return True, tab_words
+        return False, tab_words
 
 
 class ThreadClass(QtCore.QThread):
