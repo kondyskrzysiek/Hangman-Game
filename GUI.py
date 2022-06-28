@@ -170,7 +170,8 @@ class MainWindow:
             self.obj = ComputerMode.ComputerSolve(
                 self.tab_words[self.kolejka[self.index_kolejki]], self.dictionary)
             for i in self.letters:
-                self.tab_words = self.check_letter(self.kolejka[self.index_kolejki], i, value, tab_words)[1]
+                self.tab_words = self.check_letter(
+                    self.kolejka[self.index_kolejki], i, value, tab_words)[1]
 
                 if self.letters[len(self.letters) - 1] in self.tab_words[self.kolejka[self.index_kolejki]]:
                     check_l = True
