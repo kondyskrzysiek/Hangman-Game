@@ -88,7 +88,7 @@ class MainWindow:
                     self.tab.append(edit_text)
                     self.ui.horizontalLayout_7.addWidget(
                         self.tab[index], 0, QtCore.Qt.AlignLeft)
-                    self.tab[index].setText(value)
+                    self.tab[index].setPlaceholderText(value)
                     index += 1
 
                 label = QLabel(self.ui.widget_5)
@@ -99,14 +99,14 @@ class MainWindow:
                 self.ui.horizontalLayout_7.addWidget(self.tab[index])
                 index += 1
 
-            self.kolejka = [[i, v] for i, v in enumerate(self.word.split(' '))]
+            self.kolejka = [[i, v] for i, v in enumerate(self.tab_words)]
             self.dictionary = 'slowa.txt'
 
             self.kolejka = sorted(
-                self.kolejka key=lambda x: len(x[1]), reverse=True)
+                self.kolejka, key=lambda x: len(x[1]), reverse=True)
             self.index_kolejki = 0
             self.obj = ComputerMode.ComputerSolve(
-                self.tab_words[self.kolejka[self.index_kolejki]], self.dictionary)
+                self.tab_words[self.kolejka[self.index_kolejki][0]], self.dictionary)
             self.letters = []
 
     def create_lineEdit(self):
@@ -165,29 +165,33 @@ class MainWindow:
         self.ui.label.setText(picture)
 
     def game(self):
-        if all(i != '_' for i in self.tab_words[self.kolejka[self.index_kolejki]]):
-            self.index_kolejki += 1
-            self.obj = ComputerMode.ComputerSolve(
-                self.tab_words[self.kolejka[self.index_kolejki]], self.dictionary)
-            for i in self.letters:
-                self.tab_words = self.check_letter(
-                    self.kolejka[self.index_kolejki], i, value, tab_words)[1]
+        # if all(i != '_' for i in self.tab_words[self.kolejka[self.index_kolejki]]):
+        #     self.index_kolejki += 1
+        #     self.obj = ComputerMode.ComputerSolve(
+        #         self.tab_words[self.kolejka[self.index_kolejki][0]], self.dictionary)
+        #     for i in self.letters:
+        #         self.tab_words = self.check_letter(
+        #             self.kolejka[self.index_kolejki][0], i, value, tab_words)[1]
 
-                if self.letters[len(self.letters) - 1] in self.tab_words[self.kolejka[self.index_kolejki]]:
-                    check_l = True
-                self.obj.next_word(
-                    self.tab_words[self.kolejka[self.index_kolejki]], self.letters, check_l)
+        #         if self.letters[len(self.letters) - 1] in self.tab_words[self.kolejka[self.index_kolejki]]:
+        #             check_l = True
+        #         self.obj.next_word(
+        #             self.tab_words[self.kolejka[self.index_kolejki]], self.letters, check_l)
+        self.check_letter(2, 'a', self.tab_words)
+        # pass
 
-        pass
-
-    def check_letter(self, index, letter, word, tab_words):
-        if letter in word:
-            for i, v in enumerate(word):
-                if v == letter:
-                    tab_words[index][i] = v
-            return True, tab_words
-        return False, tab_words
-
+    def check_letter(self, index, letter, tab_words):
+        i = 0
+        for a, word in enumerate(tab_words):
+            for id in range(len(word)):
+                tab_words[a][id] = self.tab[i]
+                i += 1
+            i += 1
+        
+        if letter in self.tab_words[index]:
+            print('True')
+        else:
+            print('False')
 
 class ThreadClass(QtCore.QThread):
 
