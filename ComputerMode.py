@@ -49,6 +49,7 @@ class ComputerSolve:
 
     def letter_popular(self):
         self.dictionary = self.count_letter()
+
         for i in self.letter_which_be:
             if i in self.dictionary:
                 self.dictionary[i] = 0

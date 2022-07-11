@@ -223,4 +223,4 @@ def show(tab_words, letters,picture_hangman):
 
     print('\n')
 
-computer_solve('osoba osy')
+computer_solve('osoba')
